@@ -68,6 +68,22 @@ INSTALLATION
   it needs to install the module. If the make process is complaining about missing
   header files etc, please check the required files/resources under the topic
   "REQUIREMENTS".
+  
+BUILD RPM
+=========
+
+  This part of the installation gives some hints how to build a RPM package of this module.
+  
+  1) Rename this folder to mod_auth_cookie_mysql2-<version>
+     i.e. mod_auth_cookie_mysql2-1.1
+  2) Create a tar.gz-archive of this folder named mod_auth_cookie_mysql2_<version>.tar.gz
+     i.e. mod_auth_cookie_mysql2_1.1.tar.gz
+  3) Setup a rpmbuild environment
+     i.e. execute dnf install -y rpmdevtools && rpmdev-setuptree
+  4) Copy the archive into your rpmbuild-environment under SOURCES
+  5) Copy the spec-file into your rpmbuild-environment under SPECS
+  6) Install dependencies and build the package
+     i.e. dnf install -y yum-utils rpm-build && rpmbuild -ba SPECS/mod_auth_cookie_mysql2.spec
 
 CONFIGURATION
 =============
