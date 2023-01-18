@@ -14,6 +14,7 @@ License:	ASL 2.0
 URL:		http://home.digithi.de/digithi/dev/mod_auth_cookie_mysql/
 Source0:	http://home.digithi.de/digithi/dev/mod_auth_cookie_mysql/mod_auth_cookie_mysql2_%{version}.tar.gz
 
+BuildRequires:	make
 BuildRequires:	gcc
 BuildRequires:	httpd-devel
 BuildRequires:	mariadb-connector-c-devel
