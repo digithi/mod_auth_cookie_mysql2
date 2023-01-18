@@ -44,11 +44,11 @@ REQUIREMENTS
   OR modify the Makefile by adding the absolute path to the "apxs" and
   "mysql_config" commands, i.e. change
 
-    APXS = apxs
+    APXS2 = apxs
 
   to
 
-    APXS = /usr/local/apache2/bin/apxs
+    APXS2 = /usr/local/apache2/bin/apxs
 
   if apxs resists under /usr/local/apache2/bin.
 
