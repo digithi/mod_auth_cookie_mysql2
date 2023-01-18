@@ -6,7 +6,7 @@
 # If apxs cannot be found during the make process, you can adjust
 # the path, i.e.:
 #APXS = /usr/local/apache2/bin/apxs
-APXS = apxs
+APXS2 = apxs
 
 # mysql_config is searched in all directories of your PATH variable.
 # If apxs cannot be found during the make process, you can adjust the
@@ -40,10 +40,10 @@ default: all
 all: $(APACHE_MODULE)
 
 $(APACHE_MODULE): $(SRCS)
-	$(APXS) -c $(CFLAGS) $(LDFLAGS) $(SRCS)
+	$(APXS2) ${APXS2_OPTS} -c $(CFLAGS) $(LDFLAGS) $(SRCS)
 
 install: all
-	$(APXS) -i -a -n $(MODULE_NAME) ./.libs/$(APACHE_MODULE)
+	$(APXS2) ${APXS2_OPTS} -i -n $(MODULE_NAME) ./.libs/$(APACHE_MODULE)
 
 clean:
 	$(RM) $(OBJS) $(APACHE_MODULE)
