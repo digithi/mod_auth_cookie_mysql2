@@ -27,6 +27,7 @@
  *  Version 0.8 - 26.03.2007  - code cleanup, small memory leak fixed - Thimo Eichstaedt <apache-mod@digithi.de>
  *  Version 0.9 - 23.04.2007  - code/documentation cleanup, persistent database connections added, rename of config vars - Thimo Eichstaedt <apache-mod@digithi.de>
  *  Version 1.0 - 18.06.2009  - AuthCookieSQL_AdditionalSQL added, minor code cleanup - Thimo Eichstaedt <apache-mod@digithi.de> 
+ *  Version 1.1 - 18.01.2023  - Changes to get this module compiled with newest apache - Thimo Eichstaedt <apache-mod@digithi.de> 
  *
  */
 
@@ -182,7 +183,7 @@ static int check_valid_cookie(request_rec *r, auth_cookie_sql2_config_rec *conf)
 		    ap_log_rerror(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, r, ERRTAG "valid cookie found, data: %s", cookies);
 #endif
 
-		    db_ret=check_against_db(conf, r, conf->cookiename, value, username,r->connection->remote_ip, conf->sql_addon, tc);
+		    db_ret=check_against_db(conf, r, conf->cookiename, value, username,r->connection->client_ip, conf->sql_addon, tc);
 		}
 	    }
 	}
@@ -205,7 +206,7 @@ static int check_valid_cookie(request_rec *r, auth_cookie_sql2_config_rec *conf)
 	    *value = '\0';
 	    value++;
 
-	    if ((db_ret=check_against_db(conf, r, cookies, value, username, r->connection->remote_ip, conf->sql_addon, tc)) == RET_AUTHORIZED) {
+	    if ((db_ret=check_against_db(conf, r, cookies, value, username, r->connection->client_ip, conf->sql_addon, tc)) == RET_AUTHORIZED) {
 		// found valid cookie
 
 #ifdef AUTH_COOKIE_SQL2_DEBUG
