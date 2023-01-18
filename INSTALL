@@ -83,7 +83,7 @@ BUILD RPM
   4) Copy the archive into your rpmbuild-environment under SOURCES
   5) Copy the spec-file into your rpmbuild-environment under SPECS
   6) Install dependencies and build the package
-     i.e. dnf install -y yum-utils rpm-build && rpmbuild -ba SPECS/mod_auth_cookie_mysql2.spec
+     i.e. dnf install -y yum-utils rpm-build && yum-builddep SPECS/mod_auth_cookie_mysql2.spec && rpmbuild -ba SPECS/mod_auth_cookie_mysql2.spec
 
 CONFIGURATION
 =============
