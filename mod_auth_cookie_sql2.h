@@ -57,7 +57,5 @@ typedef struct s_auth_cookie_sql2_config_struct {
 
 /* Private functions */
 extern int check_against_db(auth_cookie_sql2_config_rec *, request_rec *, char *, char *, char *, char *, char *, time_t);
-extern int open_db(auth_cookie_sql2_config_rec *, request_rec *);
-extern int close_db(auth_cookie_sql2_config_rec *, request_rec *, int);
 
 #endif // _MOD_AUTH_COOKIE_SQL2_H

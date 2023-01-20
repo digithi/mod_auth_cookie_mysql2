@@ -32,34 +32,36 @@
 
 #include "mod_auth_cookie_sql2.h"
 
-static MYSQL *dbh = NULL;
+/********************************************************************************
+ *                      local function declarations                             *
+ ********************************************************************************/
+static int close_db(MYSQL **dbh, auth_cookie_sql2_config_rec *conf, request_rec *r, int force);
+static int open_db(MYSQL **dbh, auth_cookie_sql2_config_rec *conf, request_rec *r);
 
 /********************************************************************************
  *                               functions                                      *
  ********************************************************************************/
 
 /* try to open connection */
-int open_db(auth_cookie_sql2_config_rec *conf, request_rec *r) {
-
-    if (dbh != NULL) {
-	if (mysql_ping(dbh) == 0) {
+static int open_db(MYSQL **dbh, auth_cookie_sql2_config_rec *conf, request_rec *r) {
+    if (*dbh != NULL) {
+	if (mysql_ping(*dbh) == 0) {
 	    return RET_OK;
 	} else {
 	    ap_log_rerror(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, r, ERRTAG "database connection died, trying to establish a new one.");
-	    mysql_close(dbh);
-	    dbh = NULL;
+	    mysql_close(*dbh);
+	    *dbh = NULL;
 	}
     }
 
-    if ((dbh=mysql_init(NULL)) == NULL) {
+    if ((*dbh=mysql_init(NULL)) == NULL) {
 	return RET_ERR;
     }
 
-    mysql_options(dbh,MYSQL_READ_DEFAULT_GROUP,MY_MYSQL_APPNAME);
-    
-    if (mysql_real_connect(dbh, conf->dbhost, conf->dbuser, conf->dbpassword, conf->dbname, 0, NULL, 0) == NULL) {
-	ap_log_rerror(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, r, ERRTAG "couldn't connect to database: %s", mysql_error(dbh));
+    mysql_options(*dbh,MYSQL_READ_DEFAULT_GROUP,MY_MYSQL_APPNAME);
 
+    if (mysql_real_connect(*dbh, conf->dbhost, conf->dbuser, conf->dbpassword, conf->dbname, 0, NULL, 0) == NULL) {
+	ap_log_rerror(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, r, ERRTAG "couldn't connect to database: %s", mysql_error(*dbh));
 	return RET_ERR;
     } else {
 	return RET_OK;
@@ -67,15 +69,15 @@ int open_db(auth_cookie_sql2_config_rec *conf, request_rec *r) {
 }
 
 /* close the database connection */
-int close_db(auth_cookie_sql2_config_rec *conf, request_rec *r, int force) {
-    if (dbh == NULL) {
+static int close_db(MYSQL **dbh, auth_cookie_sql2_config_rec *conf, request_rec *r, int force) {
+    if (*dbh == NULL) {
 	// do nothing
     } else if (conf == NULL) {
-	mysql_close(dbh);
-	dbh=NULL;
+	mysql_close(*dbh);
+	*dbh=NULL;
     } else if (conf->dbpersistent == 0 || force == 1) {
-	mysql_close(dbh);
-	dbh=NULL;
+	mysql_close(*dbh);
+	*dbh=NULL;
     }
 
     return RET_OK;
@@ -83,6 +85,7 @@ int close_db(auth_cookie_sql2_config_rec *conf, request_rec *r, int force) {
 
 /* check given cookie against db */
 int check_against_db(auth_cookie_sql2_config_rec *conf, request_rec *r, char *cookiename, char *cookieval, char *username, char *remoteip, char *addon, time_t tc) {
+    MYSQL *dbh = NULL;
     MYSQL_RES *res;
     MYSQL_ROW row;
     apr_pool_t *p = r->pool;
@@ -91,7 +94,7 @@ int check_against_db(auth_cookie_sql2_config_rec *conf, request_rec *r, char *co
     int ulen;
     int ret=RET_ERR; // default
 
-    if (open_db(conf,r) != RET_OK) {
+    if (open_db(&dbh, conf,r) != RET_OK) {
 	ret=RET_ERR;
 	goto check_against_db_mysql_close;
     }
@@ -196,6 +199,6 @@ check_against_db_mysql_free_result:
     mysql_free_result(res);
 
 check_against_db_mysql_close:
-    close_db(conf,r,0);
+    close_db(&dbh, conf,r,0);
     return ret;
 }

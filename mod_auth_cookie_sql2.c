@@ -105,7 +105,6 @@ static apr_status_t auth_cookie_sql2_child_exit(void *data) {
     ap_log_error(APLOG_MARK, APLOG_ERR|APLOG_NOERRNO, 0, s, ERRTAG "child exit called.");
 #endif
 
-    close_db(NULL, NULL, 1);
     return APR_SUCCESS;
 }
 
